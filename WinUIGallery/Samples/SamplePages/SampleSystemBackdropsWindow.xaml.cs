@@ -8,6 +8,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using System;
+using Windows.UI.ViewManagement;
 
 namespace WinUIGallery.SamplePages;
 
@@ -201,6 +202,7 @@ public sealed partial class SampleSystemBackdropsWindow : Window
     private void SetConfigurationSourceTheme()
     {
         configurationSource.Theme = (SystemBackdropTheme)((FrameworkElement)Content).ActualTheme;
+        configurationSource.IsHighContrast = new AccessibilitySettings().HighContrast;
     }
 
     private void BackdropComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
