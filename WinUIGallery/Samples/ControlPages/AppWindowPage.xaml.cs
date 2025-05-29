@@ -14,6 +14,8 @@ public sealed partial class AppWindowPage : Page
     private IReadOnlyList<TitleBarTheme> titleBarThemes = Enum.GetValues(typeof(TitleBarTheme)).Cast<TitleBarTheme>().ToList();
     private TitleBarTheme selectedTheme = TitleBarTheme.UseDefaultAppMode;
 
+    private readonly List<Window> hidableSampleWindows = [];
+
     public AppWindowPage()
     {
         this.InitializeComponent();
@@ -23,6 +25,8 @@ public sealed partial class AppWindowPage : Page
     {
         SampleWindow1 window = new SampleWindow1(WindowTitle.Text, (int)WindowWidth.Value, (int)WindowHeight.Value, (int)XPoint.Value, (int)YPoint.Value, selectedTheme);
         window.Activate();
+
+        hidableSampleWindows.Add(window);
     }
 
     private void ShowSampleWindow2(object sender, RoutedEventArgs e)
@@ -96,5 +100,12 @@ public sealed partial class AppWindowPage : Page
         };
 
         InitialSizeDescription.Text = $"{size}: Window size is approximately {percentage} of the display's work area.";
+    }
+
+    //Closes all sample windows when the page is unloaded to prevent the app from running in the background.
+    private void AppWindowPage_Unloaded(object sender, RoutedEventArgs e)
+    {
+        foreach(Window window in hidableSampleWindows)
+            window.Close();
     }
 }
