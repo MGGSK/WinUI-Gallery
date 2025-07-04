@@ -45,7 +45,8 @@ public sealed partial class SystemBackdropsPage : Page
         var acrylicWindow = new SampleSystemBackdropsWindow
         {
             AllowedBackdrops = [
-                SampleSystemBackdropsWindow.BackdropType.Acrylic,
+                SampleSystemBackdropsWindow.BackdropType.AcrylicBase,
+                SampleSystemBackdropsWindow.BackdropType.AcrylicDefault,
                 SampleSystemBackdropsWindow.BackdropType.AcrylicThin,
                 SampleSystemBackdropsWindow.BackdropType.None
             ]

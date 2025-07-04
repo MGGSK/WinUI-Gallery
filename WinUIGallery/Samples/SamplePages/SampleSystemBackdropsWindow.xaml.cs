@@ -8,7 +8,6 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using System;
-using Windows.UI.ViewManagement;
 using Microsoft.UI.System;
 
 namespace WinUIGallery.SamplePages;
@@ -45,7 +44,8 @@ public sealed partial class SampleSystemBackdropsWindow : Window
         None,
         Mica,
         MicaAlt,
-        Acrylic,
+        AcrylicBase,
+        AcrylicDefault,
         AcrylicThin
     }
 
@@ -78,7 +78,7 @@ public sealed partial class SampleSystemBackdropsWindow : Window
             else
             {
                 // Mica isn't supported. Try Acrylic.
-                type = BackdropType.Acrylic;
+                type = BackdropType.AcrylicBase;
                 tbChangeStatus.Text += "  Mica isn't supported. Trying Acrylic.";
             }
         }
@@ -89,13 +89,13 @@ public sealed partial class SampleSystemBackdropsWindow : Window
             else
             {
                 // MicaAlt isn't supported. Try Acrylic.
-                type = BackdropType.Acrylic;
+                type = BackdropType.AcrylicBase;
                 tbChangeStatus.Text += "  MicaAlt isn't supported. Trying Acrylic.";
             }
         }
-        if (type == BackdropType.Acrylic)
+        if (type == BackdropType.AcrylicBase)
         {
-            if (TrySetAcrylicBackdrop(false))
+            if (TrySetAcrylicBackdrop(DesktopAcrylicKind.Base))
                 currentBackdrop = type;
             else
             {
@@ -103,9 +103,19 @@ public sealed partial class SampleSystemBackdropsWindow : Window
                 tbChangeStatus.Text += "  Acrylic Base isn't supported. Switching to default color.";
             }
         }
+        if (type == BackdropType.AcrylicDefault)
+        {
+            if (TrySetAcrylicBackdrop(DesktopAcrylicKind.Default))
+                currentBackdrop = type;
+            else
+            {
+                // Acrylic isn't supported, so take the next option, which is DefaultColor, which is already set.
+                tbChangeStatus.Text += "  Acrylic Default isn't supported. Switching to default color.";
+            }
+        }
         if (type == BackdropType.AcrylicThin)
         {
-            if (TrySetAcrylicBackdrop(true))
+            if (TrySetAcrylicBackdrop(DesktopAcrylicKind.Thin))
                 currentBackdrop = type;
             else
             {
@@ -148,7 +158,7 @@ public sealed partial class SampleSystemBackdropsWindow : Window
         return false; // Mica is not supported on this system.
     }
 
-    bool TrySetAcrylicBackdrop(bool useAcrylicThin)
+    bool TrySetAcrylicBackdrop(DesktopAcrylicKind kind)
     {
         if (DesktopAcrylicController.IsSupported())
         {
@@ -162,7 +172,7 @@ public sealed partial class SampleSystemBackdropsWindow : Window
             configurationSource.IsInputActive = true;
             SetConfigurationSourceTheme();
 
-            acrylicController = new DesktopAcrylicController { Kind = useAcrylicThin ? DesktopAcrylicKind.Thin : DesktopAcrylicKind.Base };
+            acrylicController = new DesktopAcrylicController { Kind = kind };
 
             // Enable the system backdrop.
             // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
