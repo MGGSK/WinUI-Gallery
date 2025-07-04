@@ -1,11 +1,12 @@
-// Copyright (c) Microsoft Corporation and Contributors.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using WinUIGallery.Models;
-using WinUIGallery.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using System;
+using WinUIGallery.Helpers;
+using WinUIGallery.Models;
 using Uri = System.Uri;
 
 namespace WinUIGallery.Controls;
@@ -89,7 +90,7 @@ public sealed partial class PageHeader : UserControl
     }
     public async void OnFeedBackButtonClick(object sender, RoutedEventArgs e)
     {
-         await Windows.System.Launcher.LaunchUriAsync(new Uri("https://github.com/microsoft/WinUI-Gallery/issues/new/choose"));
+        await Windows.System.Launcher.LaunchUriAsync(new Uri("https://github.com/microsoft/WinUI-Gallery/issues/new/choose"));
     }
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -97,6 +98,35 @@ public sealed partial class PageHeader : UserControl
         if (Item == null || (string.IsNullOrEmpty(Item.ApiNamespace) && Item.BaseClasses == null))
         {
             APIDetailsBtn.Visibility = Visibility.Collapsed;
+        }
+        if (Item != null)
+        {
+            FavoriteButton.IsChecked = SettingsHelper.Contains(SettingsKeys.Favorites, Item.UniqueId);
+        }
+    }
+
+    private string GetFavoriteGlyph(bool? isFavorite)
+    {
+        return (bool)isFavorite ? "\uE735" : "\uE734";
+    }
+
+    private string GetFavoriteToolTip(bool? isFavorite)
+    {
+        return (bool)isFavorite ? "Remove from favorites" : "Add to favorites";
+    }
+
+    private void FavoriteButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleButton toggleButton && Item != null)
+        {
+            if (toggleButton.IsChecked == true)
+            {
+                SettingsHelper.TryAddItem(SettingsKeys.Favorites, Item.UniqueId, InsertPosition.Last);
+            }
+            else
+            {
+                SettingsHelper.TryRemoveItem(SettingsKeys.Favorites, Item.UniqueId);
+            }
         }
     }
 }
